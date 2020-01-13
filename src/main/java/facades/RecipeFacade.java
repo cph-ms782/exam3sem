@@ -1,5 +1,11 @@
 package facades;
 
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -11,7 +17,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import dto.RecipeDTO;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -106,64 +111,56 @@ public class RecipeFacade {
         return recipeSearchList;
     }
 
-//    public List<RecipeDTO> getAllRecipes(String recipeID) throws IOException, InterruptedException, ExecutionException {
-//
-//        System.out.println("------------> getAllRecipes");
-//        List<String> URLS = new ArrayList();
-//        URLS.add("http://46.101.217.16:4000/recipe/" + recipeID);
-//        System.out.println("isActivatedOnce" + isActivatedOnce);
-//        if (isActivatedOnce) {
-//            return recipeList;
-//        }
-//        isActivatedOnce = true;
-//        return getAllRecipesData(URLS);
-//    }
-//    public List<RecipeDTO> getAllRecipesData(List<String> URLS) throws ProtocolException, IOException, InterruptedException, ExecutionException {
-//
-//        System.out.println("recipeList size: " + recipeList.size());
-//        if (recipeList.size() == 0) {
-//            Queue<Future<JsonObject>> queue = new ArrayBlockingQueue(URLS.size());
-//            Gson gson = new GsonBuilder()
-//                    .setPrettyPrinting()
-//                    .serializeNulls()
-//                    .setFieldNamingPolicy(FieldNamingPolicy.UPPER_CAMEL_CASE)
-//                    .create();
-//            ExecutorService workingJack = Executors.newCachedThreadPool();
-//            for (String url : URLS) {
-//                Future<JsonObject> future;
-//                future = workingJack.submit(() -> {
-//                    JsonObject jsonObject = new JsonParser().parse(getRecipeApi(url)).getAsJsonObject();
-//                    return jsonObject;
-//                });
-//                queue.add(future);
-//            }
-//            while (!queue.isEmpty()) {
-//                Future<JsonObject> cpo = queue.poll();
-//                if (cpo.isDone()) {
-//                    System.out.println("inde i getAllRecipesData");
-//                    for (JsonElement el : cpo.get().get("teams").getAsJsonArray()) {
-//                        recipeList.add(new RecipeDTO(
-//                                el.getAsJsonObject().get("name").getAsString(),
-//                                el.getAsJsonObject().get("crestUrl").getAsString(),
-//                                Integer.parseInt(el.getAsJsonObject().get("id").getAsString()),
-//                                el.getAsJsonObject().get("shortName").getAsString(),
-//                                el.getAsJsonObject().get("tla").getAsString(),
-//                                el.getAsJsonObject().get("address").getAsString(),
-//                                el.getAsJsonObject().get("website").getAsString(),
-//                                el.getAsJsonObject().get("clubColors").getAsString(),
-//                                el.getAsJsonObject().get("venue").getAsString()
-//                        ));
-//                    }
-//                } else {
-//                    queue.add(cpo);
-//                }
-//            }
-//            workingJack.shutdown();
-//            for (int i = 0; i < recipeList.size(); i++) {
-//                System.out.println(recipeList.get(i));
-//            }
-//        }
-//        System.out.println("recipeList size: " + recipeList.size());
-//        return recipeList;
-//    }
+    public List<RecipeDTO> getRecipe(String recipeID) throws IOException, InterruptedException, ExecutionException {
+
+        System.out.println("------------> getAllRecipes");
+        List<String> URLS = new ArrayList();
+        URLS.add("http://46.101.217.16:4000/recipe/" + recipeID);
+        System.out.println("isActivatedOnce" + isActivatedOnce);
+        if (isActivatedOnce) {
+            return recipeList;
+        }
+        isActivatedOnce = true;
+        return getRecipeData(URLS);
+    }
+    
+    private List<RecipeDTO> getRecipeData(List<String> URLS) throws ProtocolException, IOException, InterruptedException, ExecutionException {
+
+        System.out.println("recipeList size: " + recipeList.size());
+        if (recipeList.size() == 0) {
+            Queue<Future<JsonObject>> queue = new ArrayBlockingQueue(URLS.size());
+            ExecutorService workingJack = Executors.newCachedThreadPool();
+            for (String url : URLS) {
+                Future<JsonObject> future;
+                future = workingJack.submit(() -> {
+                    JsonObject jsonObject = new JsonParser().parse(getRecipeApi(url)).getAsJsonObject();
+                    return jsonObject;
+                });
+                queue.add(future);
+            }
+            while (!queue.isEmpty()) {
+                Future<JsonObject> cpo = queue.poll();
+                if (cpo.isDone()) {
+                    System.out.println("inde i getAllRecipesData");
+                    for (JsonElement el : cpo.get().getAsJsonArray()) {
+                        recipeList.add(new RecipeDTO(
+                                el.getAsJsonObject().get("id").getAsString(),
+                                el.getAsJsonObject().get("description").getAsString(),
+                                el.getAsJsonObject().get("prep_time").getAsString(),
+                                el.getAsJsonObject().get("preparaion_steps").getAsString(),
+                                el.getAsJsonObject().get("ingredients").getAsString()
+                        ));
+                    }
+                } else {
+                    queue.add(cpo);
+                }
+            }
+            workingJack.shutdown();
+            for (int i = 0; i < recipeList.size(); i++) {
+                System.out.println(recipeList.get(i));
+            }
+        }
+        System.out.println("recipeList size: " + recipeList.size());
+        return recipeList;
+    }
 }
