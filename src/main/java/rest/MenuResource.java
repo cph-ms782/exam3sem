@@ -1,5 +1,7 @@
 package rest;
 
+import dto.DayPlanDTO;
+import dto.MenuPlanInDTO;
 import dto.MenuPlanOutDTO;
 import facades.MenuFacade;
 import utils.EMF_Creator;
@@ -12,10 +14,15 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import javax.persistence.EntityManagerFactory;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 
 @OpenAPIDefinition(
@@ -55,26 +62,34 @@ public class MenuResource {
         return "{\"msg\":\"Hello Hobby\"}";
     }
 
-//    @GET
-//    @Path("id/{id}")
-//    @Produces(MediaType.APPLICATION_JSON)
-//    @Operation(summary = "Get Menuplan info by ID",
-//            tags = {"menuplan"},
-//            responses = {
-//                @ApiResponse(
-//                        content = @Content(mediaType = "application/json", schema = @Schema(implementation = PersonOutDTO.class))),
-//                @ApiResponse(responseCode = "200", description = "The Requested hobby"),
-//                @ApiResponse(responseCode = "403", description = "Not authenticated - do login"),
-//                @ApiResponse(responseCode = "404", description = "Person not found")})
-//    public MenuPlanOutDTO getHobbyInfo(@PathParam("id") int menuPlanID) {
-//        if (menuPlanID > 0 && menuPlanID == 99999) {
-//            // for test
-//            return new MenuPlanOutDTO();
-//        } else {
-//            // here should be something real :-)
-//            return new MenuPlanOutDTO("info@simonskodebiks.dk", "Gũnther", "Steiner");
-//        }
-//    }
+    @GET
+    @Path("new")
+    @Produces(MediaType.APPLICATION_JSON)
+    public int NewMenuPlan() {
+        return FACADE.newMenuPlan();
+    }
+
+    @GET
+    @Path("{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<DayPlanDTO> NewMenuPlan(@PathParam("id") int menuPlanID) {
+        return FACADE.getMenuPlan(menuPlanID);
+    }
+    
+    @POST
+    @Path("add")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Operation(summary = "Add dayplans to menu", tags = {"menu"},
+            responses = {
+                @ApiResponse(responseCode = "200", description = "Menuplan with added dayplan")
+            })
+    public void addToMenuPlan(MenuPlanInDTO addDayPlan) {
+        if (addDayPlan.getDayPlans().size() > 0) {
+            throw new WebApplicationException("Not all required arguments included", 400);
+        }
+    }
+
 //    @PUT
 //    @Path("edit")
 //    @Produces(MediaType.APPLICATION_JSON)
@@ -90,22 +105,7 @@ public class MenuResource {
 //        }
 //        return FACADE.editHobby(hobbyWithChanges);
 //    }
-//    @POST
-//    @Path("add")
-//    @Produces(MediaType.APPLICATION_JSON)
-//    @Consumes(MediaType.APPLICATION_JSON)
-//    @Operation(summary = "Add a new hobby to a person", tags = {"hobby"},
-//            responses = {
-//                @ApiResponse(responseCode = "200", description = "Person with added hobby"),
-//                @ApiResponse(responseCode = "400", description = "Not all arguments provided with the body")
-//            })
-//    public HobbyOutDTO addHobby(HobbyInDTO newHobby) {
-//        if (newHobby.getName()== null || newHobby.getDescription()== null) {
-//            throw new WebApplicationException("Not all required arguments included", 400);
-//        }
-//        
-//        return FACADE.addHobby(newHobby);
-//    }
+    
 //    @DELETE
 //    @Path("delete/{id}")
 //    @Produces(MediaType.APPLICATION_JSON)
@@ -146,7 +146,6 @@ public class MenuResource {
 //        List<HobbyOutDTO> p = new ArrayList();
 //        return FACADE.getHobbies();
 //    }
-    
 
     @GET
     @Path("fill")
@@ -185,5 +184,4 @@ public class MenuResource {
 //        new SetupTestUsers().fill();
 //        return "{\"msg\": \"Users filled\"}";
 //    }
-
 }

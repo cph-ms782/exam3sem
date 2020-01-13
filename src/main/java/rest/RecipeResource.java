@@ -1,10 +1,8 @@
 package rest;
 
-import dto.RecipeDTO;
 import facades.RecipeFacade;
 import java.io.IOException;
 import java.net.ProtocolException;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 import javax.ws.rs.Produces;
 import javax.ws.rs.GET;
@@ -36,8 +34,8 @@ public class RecipeResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{id}")
     public String getRecipe(@PathParam("id") String id) throws IOException, ProtocolException, ExecutionException, InterruptedException {
-        
-        return FACADE.getData("http://46.101.217.16:4000/recipe/Slow%20cooker%20spicy%20chicken%20and%20bean%20soup");
+
+        return FACADE.getData("http://46.101.217.16:4000/recipe/" + id);
     }
 
 }

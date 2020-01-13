@@ -1,9 +1,14 @@
 package facades;
 
+import dto.DayPlanDTO;
+import dto.MenuPlanInDTO;
+import dto.MenuPlanOutDTO;
 import entities.Ingredient;
 import entities.MenuPlan;
 import entities.DayPlan;
 import entities.User;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
@@ -36,27 +41,55 @@ public class MenuFacade {
         return emf.createEntityManager();
     }
 
-    public MenuPlan getMenuPlan(int menuPlanID) {
+    public List<DayPlanDTO> getMenuPlan(int menuPlanID) {
         EntityManager em = emf.createEntityManager();
         try {
-            return em.find(MenuPlan.class, menuPlanID);
+            MenuPlan menu = em.find(MenuPlan.class, menuPlanID);
+            List<DayPlanDTO> dayPlans = new ArrayList();
+            for (DayPlan dayPlan : menu.getDayPlans()) {
+                dayPlans.add(new DayPlanDTO(dayPlan.getDayPlanID(), dayPlan.getRecipe()));
+            }
+            return dayPlans;
         } finally {
             em.close();
         }
     }
 
-//    public MenuPlanOutDTO addMenuPLan(MenuPlanInDTO newHobby) {
-//        EntityManager em = emf.createEntityManager();
-//        try {
-//            em.getTransaction().begin();
-////            em.persist(new Hobby(newHobby.getName(), newHobby.getDescription()));
-//            em.getTransaction().commit();
-////            HobbyOutDTO hobOut = new HobbyOutDTO(newHobby.getName(), newHobby.getDescription());
-////            return hobOut;
-//        } finally {
-//            em.close();
-//        }
-//    }
+    public int newMenuPlan() {
+        EntityManager em = emf.createEntityManager();
+        try {
+            MenuPlan menu = new MenuPlan(3);
+            em.getTransaction().begin();
+            em.persist(menu);
+            em.getTransaction().commit();
+            return menu.getMenuPlanID();
+        } finally {
+            em.close();
+        }
+    }
+
+    public void addToMenuPlan(MenuPlanInDTO menuIn) {
+        EntityManager em = emf.createEntityManager();
+        try {
+            MenuPlan menu = new MenuPlan(3);
+            em.getTransaction().begin();
+            em.persist(menu);
+            em.getTransaction().commit();
+            for (String dayPlan : menuIn.getDayPlans()) {
+                em.getTransaction().begin();
+                DayPlan day = new DayPlan(dayPlan, 0, menu);
+                em.persist(day);
+                em.getTransaction().commit();
+            }
+
+            em.getTransaction().begin();
+            em.persist(menu);
+            em.getTransaction().commit();
+        } finally {
+            em.close();
+        }
+    }
+
 //    public HobbyOutDTO editHobby(HobbyInDTO hobbyWithChanges) {
 //        EntityManager em = emf.createEntityManager();
 //        try {

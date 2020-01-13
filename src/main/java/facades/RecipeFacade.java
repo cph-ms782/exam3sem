@@ -1,10 +1,13 @@
 package facades;
 
+import dto.RecipeDTO;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -12,6 +15,8 @@ import java.util.concurrent.Executors;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Future;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -84,4 +89,22 @@ public class RecipeFacade {
         return data;
     }
 
+
+//    public List<String> getAllRecipes() throws IOException, ProtocolException, InterruptedException, ExecutionException {
+//        List<String> recipes = new ArrayList();
+//        String allrecipes = null;
+//        try {
+//            allrecipes = getData("http://46.101.217.16:4000/allRecipes");
+//        } catch (ExecutionException ex) {
+//            Logger.getLogger(RecipeFacade.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//        String[] arrayString = allrecipes.split(",");
+//        
+//        for (String str : arrayString) {
+//            recipes.add(str);
+//        }
+//        
+//        return recipes;
+//    }
+    
 }

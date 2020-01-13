@@ -17,23 +17,25 @@ public class MenuPlanInDTO implements Serializable {
 
     private int menuPlanID;
     private int week;
-    private List<DayPlan> dayPlans = new ArrayList();
-    private List<Ingredient> ingredients = new ArrayList<>();
-    private List<User> users = new ArrayList<>();
+    private List<String> dayPlans;
 
     public MenuPlanInDTO() {
     }
 
-    public void addDayPlan(DayPlan dayPlan) {
+    public MenuPlanInDTO(List<String> dayPlans) {
+        this.dayPlans = dayPlans;
+    }
+    
+    public int getWeek() {
+        return week;
+    }
+
+    public void setWeek(int week) {
+        this.week = week;
+    }
+
+    public void addDayPlan(String dayPlan) {
         dayPlans.add(dayPlan);
-    }
-
-    public void addIngredient(Ingredient ingredient) {
-        ingredients.add(ingredient);
-    }
-
-    public void addUser(User user) {
-        users.add(user);
     }
 
     public int getMenuPlanID() {
@@ -44,28 +46,12 @@ public class MenuPlanInDTO implements Serializable {
         this.menuPlanID = menuPlanID;
     }
 
-    public List<DayPlan> getDayPlans() {
+    public List<String> getDayPlans() {
         return dayPlans;
     }
 
-    public void setDayPlans(List<DayPlan> dayPlans) {
+    public void setDayPlans(List<String> dayPlans) {
         this.dayPlans = dayPlans;
     }
 
-    public List<Ingredient> getIngredients() {
-        return ingredients;
-    }
-
-    public void setIngredients(List<Ingredient> ingredients) {
-        this.ingredients = ingredients;
-    }
-
-    public List<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(List<User> users) {
-        this.users = users;
-    }
-    
 }
