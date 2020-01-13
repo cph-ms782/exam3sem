@@ -179,12 +179,12 @@ public class MenuResource {
         return "{\"msg\": \"DB emptied\"}";
     }
 
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path("filluser")
-    public String fillUsersDB() {
-        new SetupTestUsers().fill();
-        return "{\"msg\": \"Users filled\"}";
-    }
+//    @GET
+//    @Produces(MediaType.APPLICATION_JSON)
+//    @Path("filluser")
+//    public String fillUsersDB() {
+//        new SetupTestUsers().fill();
+//        return "{\"msg\": \"Users filled\"}";
+//    }
 
 }
