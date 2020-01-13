@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
+import javax.annotation.security.RolesAllowed;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -64,20 +65,32 @@ public class MenuResource {
 
     @GET
     @Path("new")
+    @RolesAllowed({"user", "admin"})
     @Produces(MediaType.APPLICATION_JSON)
+    @Operation(summary = "Make new Menuplan", tags = {"menu"},
+            responses = {
+                @ApiResponse(responseCode = "200", description = "Make menyplan")
+            })
     public int NewMenuPlan() {
         return FACADE.newMenuPlan();
     }
 
     @GET
     @Path("{id}")
+    @RolesAllowed({"user", "admin"})
     @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Operation(summary = "Get dayplans by id", tags = {"menu"},
+            responses = {
+                @ApiResponse(responseCode = "200", description = "Get a dayplan")
+            })
     public List<DayPlanDTO> NewMenuPlan(@PathParam("id") int menuPlanID) {
         return FACADE.getMenuPlan(menuPlanID);
     }
-    
+
     @POST
     @Path("add")
+    @RolesAllowed({"user", "admin"})
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     @Operation(summary = "Add dayplans to menu", tags = {"menu"},
@@ -88,6 +101,7 @@ public class MenuResource {
         if (addDayPlan.getDayPlans().size() > 0) {
             throw new WebApplicationException("Not all required arguments included", 400);
         }
+        FACADE.addToMenuPlan(addDayPlan);
     }
 
 //    @PUT
@@ -105,7 +119,6 @@ public class MenuResource {
 //        }
 //        return FACADE.editHobby(hobbyWithChanges);
 //    }
-    
 //    @DELETE
 //    @Path("delete/{id}")
 //    @Produces(MediaType.APPLICATION_JSON)
@@ -146,7 +159,6 @@ public class MenuResource {
 //        List<HobbyOutDTO> p = new ArrayList();
 //        return FACADE.getHobbies();
 //    }
-
     @GET
     @Path("fill")
     @Operation(summary = "Fill database with start data",
