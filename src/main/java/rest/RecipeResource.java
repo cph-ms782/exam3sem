@@ -29,15 +29,15 @@ public class RecipeResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("allrecipes")
     public String getAllRecipes() throws IOException, ProtocolException, ExecutionException, InterruptedException {
-        return FACADE.getAllRecipeTitles();
+        return FACADE.getData("http://46.101.217.16:4000/allRecipes");
     }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("recipe/{id}")
-    public List<RecipeDTO> getRecipe(@PathParam("id") String id) throws IOException, ProtocolException, ExecutionException, InterruptedException {
+    @Path("{id}")
+    public String getRecipe(@PathParam("id") String id) throws IOException, ProtocolException, ExecutionException, InterruptedException {
         
-        return FACADE.getRecipe("Cheese and bacon stuffed pasta shells");
+        return FACADE.getData("http://46.101.217.16:4000/recipe/Slow%20cooker%20spicy%20chicken%20and%20bean%20soup");
     }
 
 }
